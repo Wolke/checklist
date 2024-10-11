@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Checklist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        ul {
+            list-style-type: none;
+        }
+        li {
+            padding: 5px;
+            background-color: #f2f2f2;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Checklist</h1>
+        <input type="text" id="itemInput" placeholder="Enter checklist item">
+        <button onclick="addItem()">Add Item</button>
+
+        <ul id="checklist"></ul>
+    </div>
+
+    <script>
+        const apiUrl = '你的 Google Apps Script 網址';  // 替換為 Google Apps Script 部署後的 URL
+
+        async function fetchItems() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            const list = document.getElementById('checklist');
+            list.innerHTML = '';  // 清空列表
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.item} (Added on: ${new Date(item.date).toLocaleString()})`;
+                list.appendChild(li);
+            });
+        }
+
+        async function addItem() {
+            const itemInput = document.getElementById('itemInput');
+            const newItem = itemInput.value;
+            if (newItem) {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ item: newItem })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    itemInput.value = '';  // 清空輸入框
+                    fetchItems();  // 重新獲取列表
+                } else {
+                    alert('Error adding item');
+                }
+            } else {
+                alert('Please enter an item');
+            }
+        }
+
+        // 載入網頁時，取得現有的 checklist
+        fetchItems();
+    </script>
+</body>
+</html>
