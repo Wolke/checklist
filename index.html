@@ -48,25 +48,27 @@
         }
 
         async function addItem() {
-            const itemInput = document.getElementById('itemInput');
-            const newItem = itemInput.value;
-            if (newItem) {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ item: newItem })
-                });
-                const result = await response.json();
-                if (result.status === 'success') {
-                    itemInput.value = '';  // 清空輸入框
-                    fetchItems();  // 重新獲取列表
-                } else {
-                    alert('Error adding item');
-                }
-            } else {
-                alert('Please enter an item');
-            }
+    const itemInput = document.getElementById('itemInput');
+    const newItem = itemInput.value;
+    if (newItem) {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item: newItem }),
+            mode: 'cors'  // 確保設置為 'cors'
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+            itemInput.value = '';  // 清空輸入框
+            fetchItems();  // 重新獲取列表
+        } else {
+            alert('Error adding item');
         }
+    } else {
+        alert('Please enter an item');
+    }
+}
+
 
         // 載入網頁時，取得現有的 checklist
         fetchItems();
